@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | ERP Attendance</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dashboard-page">
+
+  <header class="dashboard-header">
+    <h2>Student Dashboard</h2>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+  </header>
+
+  <main class="dashboard-container">
+    <section class="card student-info">
+      <h3>Student Information</h3>
+      <p><strong>Name:</strong> Yaser Arafath M</p>
+      <p><strong>Register No:</strong> 12345</p>
+      <p><strong>Department:</strong> CSBS</p>
+      <p><strong>Year:</strong> 2nd Year</p>
+    </section>
+    <section class="card leave-section">
+        
+  <h3>Apply for Leave</h3>
+  <button class="leave-toggle-btn" onclick="toggleLeaveForm()">Apply</button>
+
+  <form id="leaveForm" class="leave-form" style="display: none;">
+    <input type="text" id="leaveRegNo" placeholder="Register Number" required />
+    <input type="date" id="leaveDate" required />
+    <textarea id="leaveReason" placeholder="Reason for Leave" rows="3" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+</section>
+
+
+    <section class="card attendance-info">
+      <h3>Attendance</h3>
+      <ul>
+        <li>DATABASE MANAGEMENT SYSTEM: <span class="att green">85%</span></li>
+        <li>OBJECT ORIENTED PROGRAMMING: <span class="att green">78%</span></li>
+        <li>COMPUTATIONAL STATISTIC: <span class="att red">68%</span></li>
+        <li>COMPUTER ORGANIZATION AND ARCHITECTURE: <span class="att green">82%</span></li>
+      </ul>
+    </section>
+
+    <section class="card fee-info">
+      <h3>Fee Details</h3>
+      <p><strong>Total Fee:</strong> ₹60,000</p>
+      <p><strong>Paid:</strong> ₹45,000</p>
+      <p><strong>Pending:</strong> ₹15,000</p>
+    </section>
+  </main>
+  <section class="card leave-section">
+  
+  
+</section>
+
+
+  <footer class="footer">
+    <p>© Made by Yaser Arafath M 💻</p>
+  </footer>
+   <script>
+    function logout() {
+      window.location.href = "login.html";
+    }
+  </script>
+  <script>
+  function logout() {
+    window.location.href = "login.html";
+  }
+
+  function toggleLeaveForm() {
+    const form = document.getElementById("leaveForm");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
+
+  document.getElementById("leaveForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const reg = document.getElementById("leaveRegNo").value;
+    const date = document.getElementById("leaveDate").value;
+    const reason = document.getElementById("leaveReason").value;
+
+    alert(`Leave Applied!\nRegister No: ${reg}\nDate: ${date}\nReason: ${reason}`);
+
+    this.reset();
+    this.style.display = "none";
+  });
+</script>
+<script>
+  const student = JSON.parse(localStorage.getItem("loggedInStudent"));
+
+  if (!student) {
+    alert("Access denied! Please login first.");
+    window.location.href = "login.html";
+  } else {
+    // Insert data into page
+    document.querySelector(".student-info").innerHTML = `
+      <h3>Student Information</h3>
+      <p><strong>Name:</strong> ${student.name}</p>
+      <p><strong>Register No:</strong> ${student.regNo}</p>
+      <p><strong>Department:</strong> ${student.dept}</p>
+      <p><strong>Year:</strong> ${student.year}</p>
+    `;
+
+    const attHtml = Object.entries(student.attendance)
+      .map(([subject, percent]) => {
+        const cls = percent >= 75 ? "green" : "red";
+        return `<li>${subject}: <span class="att ${cls}">${percent}%</span></li>`;
+      })
+      .join("");
+    document.querySelector(".attendance-info").innerHTML = `
+      <h3>Attendance</h3>
+      <ul>${attHtml}</ul>
+    `;
+
+    document.querySelector(".fee-info").innerHTML = `
+      <h3>Fee Details</h3>
+      <p><strong>Total Fee:</strong> ₹${student.fees.total}</p>
+      <p><strong>Paid:</strong> ₹${student.fees.paid}</p>
+      <p><strong>Pending:</strong> ₹${student.fees.pending}</p>
+    `;
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedInStudent");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
